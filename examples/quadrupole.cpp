@@ -1,12 +1,14 @@
 #include "geometry/scenarios.h"
 #include "solvers/sor.h"
 #include "utils/field_export.h"
+#include "utils/output_path.h"
 #include <iostream>
 #include <cmath>
 
 using namespace poisson;
 
-int main() {
+int main(int argc, char* argv[]) {
+    std::string out = output_dir(argc, argv);
     std::cout << "=== Electrostatic Quadrupole ===\n\n";
     std::cout << "Geometry: 4 electrodes at 45° intervals, alternating ±5 kV\n";
     std::cout << "Aperture radius: 30 mm, Electrode radius: 8 mm\n\n";
@@ -21,9 +23,9 @@ int main() {
     std::cout << "Iterations: " << result.iterations << "\n";
     std::cout << "Final residual: " << result.final_residual << "\n\n";
 
-    field_export::to_json(grid, "quadrupole.json");
+    field_export::to_json(grid, out + "quadrupole.json");
     field_export::convergence_to_json(result.residual_history,
-                                      "quadrupole_convergence.json");
+                                      out + "quadrupole_convergence.json");
 
     // In an ideal quadrupole, φ ∝ xy near the center
     // Check that the potential has the expected symmetry
@@ -54,6 +56,6 @@ int main() {
               << ", Ey=" << Ey[center_idx] << " V/m\n";
     std::cout << "  (Should be ≈ 0 by symmetry)\n";
 
-    std::cout << "\nExported: quadrupole.json\n";
+    std::cout << "\nExported: " << out << "quadrupole.json\n";
     return 0;
 }

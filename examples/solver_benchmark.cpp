@@ -3,6 +3,7 @@
 #include "solvers/gauss_seidel.h"
 #include "solvers/sor.h"
 #include "utils/field_export.h"
+#include "utils/output_path.h"
 #include <iostream>
 #include <iomanip>
 #include <chrono>
@@ -37,7 +38,8 @@ BenchmarkEntry run_benchmark(const std::string& label, size_t n, double tol) {
             ms, result.converged, result.residual_history};
 }
 
-int main() {
+int main(int argc, char* argv[]) {
+    std::string out = output_dir(argc, argv);
     std::cout << "=== Solver Benchmark: Quadrupole Problem ===\n\n";
 
     double tol = 1e-4;
@@ -78,7 +80,7 @@ int main() {
     }
 
     // Export benchmark results as JSON for Plotly
-    std::ofstream f("benchmark.json");
+    std::ofstream f(out + "benchmark.json");
     f << "{\n  \"entries\": [\n";
     for (size_t i = 0; i < entries.size(); ++i) {
         const auto& e = entries[i];
@@ -98,6 +100,6 @@ int main() {
     }
     f << "  ]\n}\n";
 
-    std::cout << "Exported: benchmark.json\n";
+    std::cout << "Exported: " << out << "benchmark.json\n";
     return 0;
 }

@@ -1,12 +1,14 @@
 #include "geometry/scenarios.h"
 #include "solvers/sor.h"
 #include "utils/field_export.h"
+#include "utils/output_path.h"
 #include <iostream>
 #include <cmath>
 
 using namespace poisson;
 
-int main() {
+int main(int argc, char* argv[]) {
+    std::string out = output_dir(argc, argv);
     std::cout << "=== Coaxial Cylinders ===\n\n";
 
     double r_inner = 0.01;   // 10mm inner conductor
@@ -23,9 +25,9 @@ int main() {
     std::cout << "Iterations: " << result.iterations << "\n";
     std::cout << "Final residual: " << result.final_residual << "\n\n";
 
-    field_export::to_json(grid, "coaxial.json");
+    field_export::to_json(grid, out + "coaxial.json");
     field_export::convergence_to_json(result.residual_history,
-                                      "coaxial_convergence.json");
+                                      out + "coaxial_convergence.json");
 
     // Analytic solution: φ(r) = V_inner * ln(r/r_outer) / ln(r_inner/r_outer)
     std::cout << "--- Analytic Validation (along x-axis, y=0) ---\n";
@@ -58,6 +60,6 @@ int main() {
     std::cout << "Max absolute error over " << samples
               << " samples: " << max_error << " V\n";
 
-    std::cout << "\nExported: coaxial.json\n";
+    std::cout << "\nExported: " << out << "coaxial.json\n";
     return 0;
 }

@@ -1,12 +1,14 @@
 #include "geometry/scenarios.h"
 #include "solvers/sor.h"
 #include "utils/field_export.h"
+#include "utils/output_path.h"
 #include <iostream>
 #include <cmath>
 
 using namespace poisson;
 
-int main() {
+int main(int argc, char* argv[]) {
+    std::string out = output_dir(argc, argv);
     std::cout << "=== Parallel Plate Capacitor ===\n\n";
 
     // Create scenario: 128×128 grid, 1 kV across 50mm gap
@@ -22,12 +24,12 @@ int main() {
     std::cout << "Final residual: " << result.final_residual << "\n\n";
 
     // Export for visualization
-    field_export::to_json(grid, "parallel_plates.json");
+    field_export::to_json(grid, out + "parallel_plates.json");
     field_export::convergence_to_json(result.residual_history,
-                                      "parallel_plates_convergence.json");
+                                      out + "parallel_plates_convergence.json");
 
-    std::cout << "Exported: parallel_plates.json\n";
-    std::cout << "Exported: parallel_plates_convergence.json\n";
+    std::cout << "Exported: " << out << "parallel_plates.json\n";
+    std::cout << "Exported: " << out << "parallel_plates_convergence.json\n";
 
     // Validate: between the plates, E should be roughly uniform
     // and φ should be linear in y
